@@ -47,9 +47,9 @@ def main() -> int:
     )
     # TODO:
     parser.add_argument(
-        "-o",
-        "--only",
-        type=int,
+        "-i",
+        "--ids",
+        nargs="+",
         help="specified conversations id(by default parse all messages)",
     )
     # TODO:
