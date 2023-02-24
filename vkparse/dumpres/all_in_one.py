@@ -1,10 +1,10 @@
 from pathlib import Path
 from typing import Any
 
-from converters.abstract_converter import AbstractConverter
-from dumpres.abstract_save_strategy import AbstractSaveStrategy
-from dumpres.buffered_file_dumper import BufferedFileDumper
-from models.message import Message
+from vkparse.converters.abstract_converter import AbstractConverter
+from vkparse.dumpres.abstract_save_strategy import AbstractSaveStrategy
+from vkparse.dumpres.buffered_file_dumper import BufferedFileDumper
+from vkparse.models.message import Message
 
 
 class AllInOneSaveStrategy(AbstractSaveStrategy):

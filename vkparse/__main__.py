@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import logging
 import os
 import sys
 from argparse import ArgumentParser
@@ -10,6 +11,7 @@ from dumpres.as_is_save_strategy import AsIsSaveStrategy
 from dumpres.directory_save_strategy import DirectorySaveStrategy
 from parsers.bs4_parser import BS4Parser
 from pipe import Pipe
+from vkparse.dumpres.not_save import NotSave
 
 _STR_TO_SAVE_STRATEGY = {
     "all-in-one": AllInOneSaveStrategy,
@@ -21,12 +23,18 @@ _STR_TO_PARSER = {"bs4": BS4Parser}
 
 _STR_TO_CONVERTER = {"json": JsonConverter}
 
+logger = logging.getLogger(__name__)
+
 
 def process(
     root: Path, parser: str, file_ext: str, save_strategy: str, out_dir: Path
 ) -> None:
     converter_cls = _STR_TO_CONVERTER[file_ext]
     saver_cls = _STR_TO_SAVE_STRATEGY[save_strategy]
+    if os.getenv("VKPARSE_DEBUG"):
+        # Preventing hard drive wear
+        logger.warning("You running vkparse in DEBUG mode")
+        saver_cls = NotSave
     saver = saver_cls(
         path=out_dir, file_ext=file_ext, converter=converter_cls()
     )

@@ -2,9 +2,9 @@ import os
 from pathlib import Path
 from typing import Iterator
 
-from dumpres.abstract_save_strategy import AbstractSaveStrategy
+from vkparse.dumpres.abstract_save_strategy import AbstractSaveStrategy
 from local_file_loader import LocalFileLoader
-from parsers.abstract_parser import AbstractParser
+from vkparse.parsers.abstract_parser import AbstractParser
 
 
 def _get_files(directory: Path) -> Iterator[Path]:
@@ -27,7 +27,8 @@ class Pipe:
     def process(self) -> None:
         for directory in self._dirs:
             print(f"Preparing {directory}.")
-            self._process_dir(directory)
+            if directory.is_dir():
+                self._process_dir(directory)
         self._saver.on_end()
 
     def _process_dir(self, directory: Path) -> None:

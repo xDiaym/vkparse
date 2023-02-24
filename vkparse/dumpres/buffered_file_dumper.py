@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from converters.abstract_converter import AbstractConverter
-from dumpres.utils import create_dir, fix_file_ext, fix_ext
-from models.message import Message
+from vkparse.converters.abstract_converter import AbstractConverter
+from vkparse.dumpres.utils import create_dir, fix_file_ext, fix_ext
+from vkparse.models.message import Message
 
 
 class BufferedFileDumper:

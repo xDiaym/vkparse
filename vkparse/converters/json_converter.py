@@ -3,8 +3,8 @@ from datetime import datetime
 from json import dumps, JSONEncoder
 from typing import Any
 
-from converters.abstract_converter import AbstractConverter
-from models.message import Message
+from vkparse.converters.abstract_converter import AbstractConverter
+from vkparse.models.message import Message
 
 
 class ExtendedJSONEncoder(JSONEncoder):

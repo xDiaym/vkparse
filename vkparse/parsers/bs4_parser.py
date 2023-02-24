@@ -2,13 +2,13 @@ from datetime import datetime
 from typing import final
 
 import bs4
-from bs4 import Tag
+from bs4.element import Tag
 
-from models import author
-from models.author import Author
-from models.message import Message
-from parsers.abstract_parser import AbstractParser
-from parsers.utils import get_id_from_link
+from vkparse.models import author
+from vkparse.models.author import Author
+from vkparse.models.message import Message
+from vkparse.parsers.abstract_parser import AbstractParser
+from vkparse.parsers.utils import get_id_from_link
 
 
 @final
