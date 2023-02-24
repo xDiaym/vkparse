@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import final
+from typing import final, Optional
 
 import bs4
 from bs4.element import Tag
@@ -22,15 +22,15 @@ class BS4Parser(AbstractParser):
     @staticmethod
     def _parse_message(html: Tag) -> Message:
         header = html.find("div", class_="message__header")
-        author_tag = header.find("a")
+        author_tag = header.find("a")  # type: ignore
         from_ = author.YOU
         if author_tag:
-            id_ = get_id_from_link(author_tag.get("href"))
-            from_ = Author(id_, author_tag.text)
+            id_ = get_id_from_link(author_tag.get("href"))  # type: ignore
+            from_ = Author(id_, author_tag.text)  # type: ignore
 
         # FIXME: text matching
         kludges = html.find("div", class_="kludges")
-        text = kludges.previous_element.text
+        text = kludges.previous_element.text  # type: ignore
         if not isinstance(text, str):
             text = None
         # TODO: attachments
