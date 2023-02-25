@@ -1,12 +1,17 @@
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
-from vkparse.models.message import Message
+if TYPE_CHECKING:
+    from vkparse.models.message import Message
 
 
 class AbstractSaveStrategy(ABC):
     @abstractmethod
     def on_file(
-        self, directory_name: str, file_name: str, messages: list[Message]
+        self,
+        directory_name: str,
+        file_name: str,
+        messages: list[Message],
     ) -> None:
         pass
 

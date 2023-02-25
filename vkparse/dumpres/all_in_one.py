@@ -1,10 +1,13 @@
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from vkparse.converters.abstract_converter import AbstractConverter
 from vkparse.dumpres.abstract_save_strategy import AbstractSaveStrategy
 from vkparse.dumpres.buffered_file_dumper import BufferedFileDumper
-from vkparse.models.message import Message
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from vkparse.converters.abstract_converter import AbstractConverter
+    from vkparse.models.message import Message
 
 
 class AllInOneSaveStrategy(AbstractSaveStrategy):
@@ -16,14 +19,15 @@ class AllInOneSaveStrategy(AbstractSaveStrategy):
         extension: str,
         converter: AbstractConverter,
         *args: Any,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
-        self._dumper = BufferedFileDumper(
-            path, extension, converter, *args, **kwargs
-        )
+        self._dumper = BufferedFileDumper(path, extension, converter, *args, **kwargs)
 
     def on_file(
-        self, directory_name: str, file_name: str, messages: list[Message]
+        self,
+        _directory_name: str,
+        _file_name: str,
+        messages: list[Message],
     ) -> None:
         self._dumper.add(messages)
 

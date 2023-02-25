@@ -1,17 +1,19 @@
 import dataclasses
 from datetime import datetime
 from json import JSONEncoder, dumps
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from vkparse.converters.abstract_converter import AbstractConverter
-from vkparse.models.message import Message
+
+if TYPE_CHECKING:
+    from vkparse.models.message import Message
 
 
 class ExtendedJSONEncoder(JSONEncoder):
     def default(self, o: Any) -> Any:
         if dataclasses.is_dataclass(o):
             return dataclasses.asdict(o)
-        elif isinstance(o, datetime):
+        if isinstance(o, datetime):
             return o.timestamp()
         return super().default(o)
 

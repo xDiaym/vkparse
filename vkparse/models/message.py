@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
 from vkparse.models.attachment import Attachment
 from vkparse.models.author import Author
@@ -10,5 +9,5 @@ from vkparse.models.author import Author
 class Message:
     author: Author
     date: datetime
-    text: Optional[str]
-    attachments: Optional[list[Attachment]]
+    text: str | None
+    attachments: list[Attachment] | None

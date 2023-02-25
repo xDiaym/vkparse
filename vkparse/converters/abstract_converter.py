@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
-from vkparse.models.message import Message
+if TYPE_CHECKING:
+    from vkparse.models.message import Message
 
 
 class AbstractConverter(ABC):

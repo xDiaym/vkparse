@@ -1,14 +1,30 @@
-from datetime import datetime
-from typing import Generator, final
+import re
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING, final
 
 import bs4
-from bs4.element import Tag
 
 from vkparse.models import author
 from vkparse.models.author import Author
 from vkparse.models.message import Message
 from vkparse.parsers.abstract_parser import AbstractParser
-from vkparse.parsers.utils import get_id_from_link
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from bs4.element import Tag
+
+# FIXME: нyжнo paзличaть id пa6ликa и чeлoвeкa
+_LINK_REGEX = re.compile(r"https?://vk\.com/(:?id|club|public)(\d+)")
+
+
+def get_id_from_link(link: str) -> int:
+    id_ = _LINK_REGEX.findall(link)
+    if not id_:
+        # TODO: custom error
+        message = f"Cannot parse link: '{link}'"
+        raise ValueError(message)
+    return int(id_[0][1])
 
 
 @final
@@ -22,17 +38,22 @@ class BS4Parser(AbstractParser):
     @staticmethod
     def _parse_message(html: Tag) -> Message:
         header = html.find("div", class_="message__header")
-        author_tag = header.find("a")  # type: ignore
+        author_tag = header.find("a")  # type: ignore[optionalMemberAccess]
         from_ = author.YOU
         if author_tag:
-            id_ = get_id_from_link(author_tag.get("href"))  # type: ignore
-            from_ = Author(id_, author_tag.text)  # type: ignore
+            id_ = get_id_from_link(author_tag.get("href"))  # type: ignore[optMember]
+            from_ = Author(id_, author_tag.text)  # type: ignore[optionalMemberAccess]
 
         # FIXME: text matching
         kludges = html.find("div", class_="kludges")
-        text = kludges.previous_element.text  # type: ignore
+        text = kludges.previous_element.text  # type: ignore[optionalMemberAccess]
         if not isinstance(text, str):
             text = None
         # TODO: attachments
         # TODO: time
-        return Message(author=from_, date=datetime.now(), text=text, attachments=None)
+        return Message(
+            author=from_,
+            date=datetime.now(tz=timezone.utc),
+            text=text,
+            attachments=None,
+        )

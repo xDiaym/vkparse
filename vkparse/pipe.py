@@ -1,16 +1,21 @@
 import os
 from pathlib import Path
-from typing import Iterator
+from typing import TYPE_CHECKING
 
 from local_file_loader import LocalFileLoader
 
-from vkparse.dumpres.abstract_save_strategy import AbstractSaveStrategy
-from vkparse.parsers.abstract_parser import AbstractParser
+from vkparse import logger
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from vkparse.dumpres.abstract_save_strategy import AbstractSaveStrategy
+    from vkparse.parsers.abstract_parser import AbstractParser
 
 
 def _get_files(directory: Path) -> Iterator[Path]:
     content = os.listdir(directory.absolute())
-    paths = map(lambda x: directory / x, content)
+    paths = (directory / x for x in content)
     return filter(Path.is_file, paths)
 
 
@@ -27,7 +32,7 @@ class Pipe:
 
     def process(self) -> None:
         for directory in self._dirs:
-            print(f"Preparing {directory}.")
+            logger.info("Preparing %s.", directory)
             if directory.is_dir():
                 self._process_dir(directory)
         self._saver.on_end()
@@ -37,9 +42,9 @@ class Pipe:
             if not file.is_file():
                 continue
 
-            print(f"Parsing {file}")
+            logger.info("Parsing %s", file)
             content = LocalFileLoader(file).load()
-            # FIXME: использовать API итераторов
+            # FIXME: иcпoльзoвaть API итepaтopoв
             messages = list(self._parser(content))
             self._saver.on_file(directory.name, file.name, messages)
         self._saver.on_directory_end(directory.name)

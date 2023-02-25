@@ -1,8 +1,11 @@
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from vkparse.converters.abstract_converter import AbstractConverter
-from vkparse.dumpres.utils import create_dir, fix_ext
-from vkparse.models.message import Message
+from vkparse.dumpres.utils import create_dir
+
+if TYPE_CHECKING:
+    from vkparse.converters.abstract_converter import AbstractConverter
+    from vkparse.models.message import Message
 
 
 class BufferedFileDumper:
@@ -14,7 +17,9 @@ class BufferedFileDumper:
         mode: str = "w+",
     ) -> None:
         self._root = root
-        self._file_ext = fix_ext(file_ext)
+        self._file_ext = file_ext
+        if not self._file_ext.startswith("."):
+            self._file_ext = "." + self._file_ext
         self._converter = converter
         self._mode = mode
         self._buffer: list[Message] = []

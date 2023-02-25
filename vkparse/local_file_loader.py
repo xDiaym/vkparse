@@ -1,6 +1,9 @@
 import logging
 import sys
-from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class LocalFileLoader:
@@ -14,7 +17,7 @@ class LocalFileLoader:
             with open(self._path, encoding=self._encoding) as fp:
                 return fp.read()
         except OSError as err:
-            self._logger.exception(err)
+            self._logger.exception("an exception occurred", exc_info=err)
             sys.exit(-1)
 
     def __call__(self) -> str:

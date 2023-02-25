@@ -12,6 +12,7 @@ from dumpres.directory_save_strategy import DirectorySaveStrategy
 from parsers.bs4_parser import BS4Parser
 from pipe import Pipe
 
+from vkparse import logger
 from vkparse.dumpres.not_save import NotSave
 
 _STR_TO_SAVE_STRATEGY = {
@@ -19,27 +20,21 @@ _STR_TO_SAVE_STRATEGY = {
     "directory": DirectorySaveStrategy,
     "as-is": AsIsSaveStrategy,
 }
-
 _STR_TO_PARSER = {"bs4": BS4Parser}
-
 _STR_TO_CONVERTER = {"json": JsonConverter}
 
-logger = logging.getLogger(__name__)
 
-
-def process(
-    root: Path, parser: str, file_ext: str, save_strategy: str, out_dir: Path
-) -> None:
-    converter_cls = _STR_TO_CONVERTER[file_ext]
+def process(root: Path, save_strategy: str, out_dir: Path, *, debug_mode: bool) -> None:
+    converter_cls = JsonConverter
     saver_cls = _STR_TO_SAVE_STRATEGY[save_strategy]
-    if os.getenv("VKPARSE_DEBUG"):
+    if debug_mode:
         # Preventing hard drive wear
-        logger.warning("You running vkparse in DEBUG mode")
         saver_cls = NotSave
-    saver = saver_cls(path=out_dir, file_ext=file_ext, converter=converter_cls())
-    parser_cls = _STR_TO_PARSER[parser]
 
-    dirs = list(map(lambda x: root / x, os.listdir(root)))
+    saver = saver_cls(path=out_dir, file_ext="json", converter=converter_cls())
+    parser_cls = BS4Parser
+
+    dirs = [root / x for x in os.listdir(root)]
     pipe = Pipe(dirs, parser_cls(), saver)
     pipe.process()
 
@@ -57,22 +52,7 @@ def main() -> int:
         nargs="+",
         help="specified conversations id(by default parse all messages)",
     )
-    # TODO:
     parser.add_argument("-q", "--quite", action="store_true", help="disable any output")
-    parser.add_argument(
-        "-f",
-        "--format",
-        choices=("json", "csv", "sqlite3"),
-        default="json",
-        help="convert format",
-    )
-    parser.add_argument(
-        "-p",
-        "--parser",
-        choices=("bs4",),
-        default="bs4",
-        help="parser implementation",
-    )
     # FIXME: file extension
     parser.add_argument(
         "-o",
@@ -94,13 +74,19 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    process(
-        args.directory,
-        args.parser,
-        args.format,
-        args.save_strategy,
-        args.output,
-    )
+    debug_mode = False
+    if os.getenv("VKPARSE_DEBUG"):
+        logger.warning("You running vkparse in DEBUG mode")
+        logger.setLevel(logging.DEBUG)
+        debug_mode = True
+
+    try:
+        process(args.directory, args.save_strategy, args.output, debug_mode=debug_mode)
+    except KeyboardInterrupt:
+        return 0
+    except Exception as e:
+        logger.exception("an exception occurred", exc_info=e)
+        return -1
     return 0
 
 
