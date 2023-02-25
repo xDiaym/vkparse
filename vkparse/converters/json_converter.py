@@ -1,6 +1,6 @@
 import dataclasses
 from datetime import datetime
-from json import dumps, JSONEncoder
+from json import JSONEncoder, dumps
 from typing import Any
 
 from vkparse.converters.abstract_converter import AbstractConverter

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 # TODO: Author caching
 @dataclass(slots=True)
 class Author:
-    id: int
+    id_: int
     name: str
 
 

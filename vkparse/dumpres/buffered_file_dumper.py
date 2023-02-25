@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from vkparse.converters.abstract_converter import AbstractConverter
-from vkparse.dumpres.utils import create_dir, fix_file_ext, fix_ext
+from vkparse.dumpres.utils import create_dir, fix_ext
 from vkparse.models.message import Message
 
 
@@ -27,7 +27,7 @@ class BufferedFileDumper:
         self._buffer.clear()
 
         path = Path(self._root / dir_name / file_name)
-        filename = fix_file_ext(path, self._file_ext)
+        filename = path.with_suffix(self._file_ext)
         create_dir(filename)
         with open(filename, self._mode) as fp:
             fp.write(converted)

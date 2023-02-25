@@ -2,8 +2,9 @@ import os
 from pathlib import Path
 from typing import Iterator
 
-from vkparse.dumpres.abstract_save_strategy import AbstractSaveStrategy
 from local_file_loader import LocalFileLoader
+
+from vkparse.dumpres.abstract_save_strategy import AbstractSaveStrategy
 from vkparse.parsers.abstract_parser import AbstractParser
 
 
@@ -38,6 +39,7 @@ class Pipe:
 
             print(f"Parsing {file}")
             content = LocalFileLoader(file).load()
-            messages = self._parser(content)
+            # FIXME: использовать API итераторов
+            messages = list(self._parser(content))
             self._saver.on_file(directory.name, file.name, messages)
         self._saver.on_directory_end(directory.name)

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import final, Optional
+from typing import Generator, final
 
 import bs4
 from bs4.element import Tag
@@ -13,11 +13,11 @@ from vkparse.parsers.utils import get_id_from_link
 
 @final
 class BS4Parser(AbstractParser):
-    def parse(self, content: str) -> list[Message]:
+    def parse(self, content: str) -> Generator[Message, None, None]:
         soup = bs4.BeautifulSoup(content, "html.parser")
 
         messages = soup.find_all("div", class_="item__main")
-        return list(map(self._parse_message, messages))
+        yield from map(self._parse_message, messages)
 
     @staticmethod
     def _parse_message(html: Tag) -> Message:
@@ -35,6 +35,4 @@ class BS4Parser(AbstractParser):
             text = None
         # TODO: attachments
         # TODO: time
-        return Message(
-            author=from_, date=datetime.now(), text=text, attachments=None
-        )
+        return Message(author=from_, date=datetime.now(), text=text, attachments=None)

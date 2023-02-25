@@ -11,6 +11,7 @@ from dumpres.as_is_save_strategy import AsIsSaveStrategy
 from dumpres.directory_save_strategy import DirectorySaveStrategy
 from parsers.bs4_parser import BS4Parser
 from pipe import Pipe
+
 from vkparse.dumpres.not_save import NotSave
 
 _STR_TO_SAVE_STRATEGY = {
@@ -35,9 +36,7 @@ def process(
         # Preventing hard drive wear
         logger.warning("You running vkparse in DEBUG mode")
         saver_cls = NotSave
-    saver = saver_cls(
-        path=out_dir, file_ext=file_ext, converter=converter_cls()
-    )
+    saver = saver_cls(path=out_dir, file_ext=file_ext, converter=converter_cls())
     parser_cls = _STR_TO_PARSER[parser]
 
     dirs = list(map(lambda x: root / x, os.listdir(root)))
@@ -50,9 +49,7 @@ def main() -> int:
         prog="vkgdprparse",
         description="%(prog)s: Convert VK GDPR dumps to JSON/CSV/SQLite3",
     )
-    parser.add_argument(
-        "directory", type=Path, help="directory with messages dump"
-    )
+    parser.add_argument("directory", type=Path, help="directory with messages dump")
     # TODO:
     parser.add_argument(
         "-i",
@@ -61,9 +58,7 @@ def main() -> int:
         help="specified conversations id(by default parse all messages)",
     )
     # TODO:
-    parser.add_argument(
-        "-q", "--quite", action="store_true", help="disable any output"
-    )
+    parser.add_argument("-q", "--quite", action="store_true", help="disable any output")
     parser.add_argument(
         "-f",
         "--format",

@@ -1,11 +1,11 @@
 import logging
-import os
+import sys
 from pathlib import Path
 
 
 class LocalFileLoader:
     def __init__(self, path: Path, encoding: str = "cp1251") -> None:
-        self._path = os.path.abspath(path)
+        self._path = path.resolve()
         self._encoding = encoding
         self._logger = logging.getLogger(self.__class__.__name__)
 
@@ -15,7 +15,7 @@ class LocalFileLoader:
                 return fp.read()
         except OSError as err:
             self._logger.exception(err)
-            exit(-1)
+            sys.exit(-1)
 
     def __call__(self) -> str:
         return self.load()
