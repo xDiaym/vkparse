@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 
 # TODO: Author caching
-@dataclass(frozen=True)
+@dataclass(slots=True)
 class Author:
-    id: int
+    id_: int
     name: str
 
 

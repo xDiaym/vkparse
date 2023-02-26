@@ -2,9 +2,14 @@
 .idea/
 
 # Python
-venv/
+.venv/
 __pycache__/
 .mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Build
+dist/
 
 # Test dumps
 *.json
