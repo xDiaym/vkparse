@@ -23,6 +23,9 @@ build-backend = "poetry.core.masonry.api"
 select = ["ALL"]
 ignore = [
     "PTH123",
+    "TCH001",
+    "TCH002",
+    "TCH003",
     "ANN101",
     "ANN401",
     "D",

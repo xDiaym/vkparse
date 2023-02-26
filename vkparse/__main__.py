@@ -5,37 +5,27 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
-from converters.json_converter import JsonConverter
-from dumpres.all_in_one import AllInOneSaveStrategy
-from dumpres.as_is_save_strategy import AsIsSaveStrategy
-from dumpres.directory_save_strategy import DirectorySaveStrategy
 from parsers.bs4_parser import BS4Parser
 from pipe import Pipe
 
 from vkparse import logger
-from vkparse.dumpres.not_save import NotSave
-
-_STR_TO_SAVE_STRATEGY = {
-    "all-in-one": AllInOneSaveStrategy,
-    "directory": DirectorySaveStrategy,
-    "as-is": AsIsSaveStrategy,
-}
-_STR_TO_PARSER = {"bs4": BS4Parser}
-_STR_TO_CONVERTER = {"json": JsonConverter}
+from vkparse.driver.json_driver import JsonDriver
+from vkparse.models.message import Message
 
 
-def process(root: Path, save_strategy: str, out_dir: Path, *, debug_mode: bool) -> None:
-    converter_cls = JsonConverter
-    saver_cls = _STR_TO_SAVE_STRATEGY[save_strategy]
-    if debug_mode:
-        # Preventing hard drive wear
-        saver_cls = NotSave
-
-    saver = saver_cls(path=out_dir, file_ext="json", converter=converter_cls())
-    parser_cls = BS4Parser
-
+def process(root: Path, out_dir: Path, *, debug_mode: bool) -> None:
     dirs = [root / x for x in os.listdir(root)]
-    pipe = Pipe(dirs, parser_cls(), saver)
+    driver = JsonDriver(out_dir)
+    if debug_mode:
+        from vkparse.driver.driver import Driver
+
+        class DummyDriver(Driver):
+            def on_message(self, message: Message) -> None:
+                pass
+
+        driver = DummyDriver()
+
+    pipe = Pipe(dirs, BS4Parser(), driver)
     pipe.process()
 
 
@@ -61,16 +51,6 @@ def main() -> int:
         default="./converted",
         help="directory with converted messages",
     )
-    parser.add_argument(
-        "--save-strategy",
-        choices=("as-is", "directory", "all-in-one"),
-        default="as-is",
-        help="""collect converted.json messages in:
-                as-is - single html to single converted file;
-                directory - all files in directory to single converted file;
-                all-in-one - all files in dump to single converted file;
-                """,
-    )
 
     args = parser.parse_args()
 
@@ -81,7 +61,7 @@ def main() -> int:
         debug_mode = True
 
     try:
-        process(args.directory, args.save_strategy, args.output, debug_mode=debug_mode)
+        process(args.directory, args.output, debug_mode=debug_mode)
     except KeyboardInterrupt:
         return 0
     except Exception as e:

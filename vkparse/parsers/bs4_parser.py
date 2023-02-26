@@ -1,18 +1,15 @@
 import re
+from collections.abc import Generator
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, final
+from typing import final
 
 import bs4
+from bs4.element import Tag
 
 from vkparse.models import author
 from vkparse.models.author import Author
 from vkparse.models.message import Message
 from vkparse.parsers.abstract_parser import AbstractParser
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
-
-    from bs4.element import Tag
 
 # FIXME: нyжнo paзличaть id пa6ликa и чeлoвeкa
 _LINK_REGEX = re.compile(r"https?://vk\.com/(:?id|club|public)(\d+)")

@@ -1,10 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from collections.abc import Generator
 
-if TYPE_CHECKING:
-    from collections.abc import Generator
-
-    from vkparse.models.message import Message
+from vkparse.models.message import Message
 
 
 class AbstractParser(ABC):
