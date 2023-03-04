@@ -1,9 +1,25 @@
 site_name: VKParse
+site_description: Эта библиотека позволяет конвертировать персональные данные, предоставляемые VK по закону GDPR
+site_author: xDiyam
+site_url: "https://xDiaym.github.io/vkparse"
+repo_url: "https://github.com/xDiaym/vkparse"
+repo_name: "xDiaym/vkparse"
 theme:
   name: material
+  language: ru
+  features:
+    - content.code.annotate
+    - navigation.tabs
+    - navigation.top
+    - toc.integrate
   palette:
     scheme: slate
 markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.magiclink
+  - pymdownx.tasklist
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
